@@ -1,1 +1,1 @@
-# canvas
+# canvas擦除效果
