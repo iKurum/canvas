@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Canvas-img</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    div.box {
+      width: 475px;
+      height: 650px;
+      border: 1px solid cornflowerblue;
+      margin: 10px auto;
+      background: url('./loginBG.jpg') no-repeat 100% 100%;
+    }
+
+    canvas#myCanvas {
+      width: 475px;
+      height: 650px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box">
+    <canvas id="myCanvas" width="950" height="1300">您的浏览器不支持canvas标签</canvas>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('myCanvas');
+    const cXY = [];
+
+    if (canvas.getContext) {
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+
+      img.src = './bg.jpg';
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0, 950, 1300);
+      }
+      canvas.addEventListener('mouseenter', (e) => {
+        cXY[0] = (e.clientX - canvas.offsetLeft) * 2;
+        cXY[1] = (e.clientY - canvas.offsetTop) * 2;
+
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.lineWidth = 200;
+        ctx.globalCompositeOperation = 'destination-out';
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(cXY[0], cXY[1], 1, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.restore();
+
+        canvas.addEventListener('mousemove', (e) => {
+          cXY[2] = (e.clientX - canvas.offsetLeft) * 2;
+          cXY[3] = (e.clientY - canvas.offsetTop) * 2;
+
+          ctx.save();
+          ctx.moveTo(cXY[0], cXY[1]);
+          ctx.lineTo(cXY[2], cXY[3]);
+          ctx.stroke();
+          ctx.restore();
+
+          [cXY[0], cXY[1]] = [cXY[2], cXY[3]];
+        }, false);
+      }, false);
+
+      canvas.addEventListener('mouseleave', () => {
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.clearRect(0, 0, 950, 1300);
+        ctx.drawImage(img, 0, 0, 950, 1300);
+      }, false);
+
+    }
+  </script>
+</body>
+
+</html>
